@@ -48,7 +48,7 @@ tasks = [
 def fetch_users():
     while True:
         try:
-            response = requests.get('http://127.0.0.1:5000/api/v1/users')  # Update the URL for version 1
+            response = requests.get('http://127.0.0.1:5000/api/v1/users')  
             if response.status_code == 200:
                 users.extend(response.json())
                 print(f"Fetched {len(response.json())} users")
@@ -299,25 +299,21 @@ def add_car_v2():
     cars.append(new_car)
     
     return jsonify(new_car), 201
-
 @app.route('/api/v2/cars', methods=['GET'])
 def get_cars_v2():
-    car_list = []
-    
-    # Get query parameters
-    color = request.args.get('color')  
-    sort = request.args.get('sort')  
-    fields = request.args.get('fields')  
-    
-    offset = int(request.args.get('offset', 0))  
+    color = request.args.get('color') 
+    sort = request.args.get('sort') 
+    fields = request.args.get('fields', '')  
+    offset = int(request.args.get('offset', 0)) 
     limit = int(request.args.get('limit', 10))  
-    
-    filtered_cars = [car for car in cars if not color or car['color'].lower() == color.lower()]
+    filtered_cars = [
+        car for car in cars if not color or car.get('color', '').lower() == color.lower()
+    ]
     
     if sort:
         sort_fields = sort.split(',')
-        for field in sort_fields:
-            reverse = field.startswith('-')  
+        for field in reversed(sort_fields): 
+            reverse = field.startswith('-') 
             field = field.lstrip('-')  
             filtered_cars.sort(key=lambda x: x.get(field, ''), reverse=reverse)
 
@@ -325,7 +321,9 @@ def get_cars_v2():
     
     if fields:
         fields_to_include = fields.split(',')
-        cars_data = [{field: car[field] for field in fields_to_include if field in car} for car in cars_data]
+        cars_data = [
+            {field: car[field] for field in fields_to_include if field in car} for car in cars_data
+        ]
     
     for car in cars_data:
         car['links'] = [

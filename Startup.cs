@@ -31,7 +31,7 @@ namespace MyApiProject
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles(); // Enable static files (e.g., error.html)
+            app.UseStaticFiles(); 
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

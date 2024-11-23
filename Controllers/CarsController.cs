@@ -22,13 +22,11 @@ namespace MyApiProject.Controllers
             new Driver { Id = 3, Name = "Mike Brown", CarId = 712 }
         };
 
-        // GET api/cars
         [HttpGet]
         public IActionResult GetAllCars([FromQuery] string color, [FromQuery] string model, [FromQuery] int? offset, [FromQuery] int? limit, [FromQuery] string sort)
         {
             var cars = Cars.AsQueryable();
 
-            // Filtering by color and model
             if (!string.IsNullOrEmpty(color))
             {
                 cars = cars.Where(c => c.Color.ToLower() == color.ToLower());
@@ -39,7 +37,6 @@ namespace MyApiProject.Controllers
                 cars = cars.Where(c => c.Model.ToLower().Contains(model.ToLower()));
             }
 
-            // Sorting by the 'sort' parameter (without EF.Property)
             if (!string.IsNullOrEmpty(sort))
             {
                 var sortParams = sort.Split(',');
@@ -57,7 +54,6 @@ namespace MyApiProject.Controllers
                 }
             }
 
-            // Pagination
             if (offset.HasValue && limit.HasValue)
             {
                 cars = cars.Skip(offset.Value).Take(limit.Value);
@@ -65,8 +61,6 @@ namespace MyApiProject.Controllers
 
             return Ok(cars.ToList());
         }
-
-        // GET api/cars/{carId}
         [HttpGet("{carId}")]
         public IActionResult GetCarById(int carId)
         {
@@ -75,7 +69,6 @@ namespace MyApiProject.Controllers
             return Ok(car);
         }
 
-        // GET api/cars/{carId}/drivers
         [HttpGet("{carId}/drivers")]
         public IActionResult GetDriversByCarId(int carId)
         {
@@ -83,7 +76,6 @@ namespace MyApiProject.Controllers
             return Ok(drivers);
         }
 
-        // POST api/cars
         [HttpPost]
         public IActionResult CreateCar([FromBody] Car newCar)
         {
@@ -95,7 +87,6 @@ namespace MyApiProject.Controllers
             return CreatedAtAction(nameof(GetCarById), new { carId = newCar.Id }, newCar);
         }
 
-        // PUT api/cars/{carId}
         [HttpPut("{carId}")]
         public IActionResult UpdateCar(int carId, [FromBody] Car updatedCar)
         {
@@ -117,7 +108,6 @@ namespace MyApiProject.Controllers
             return Ok(car);
         }
 
-        // Helper method to get property value dynamically
         private object GetPropertyValue(Car car, string propertyName)
         {
             var property = typeof(Car).GetProperty(propertyName);

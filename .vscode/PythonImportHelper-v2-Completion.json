@@ -1,0 +1,323 @@
+[
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "requests",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "requests",
+        "description": "requests",
+        "detail": "requests",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "jsonify",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_users",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def fetch_users():\n    while True:\n        try:\n            response = requests.get('http://127.0.0.1:5000/api/v1/users')  \n            if response.status_code == 200:\n                users.extend(response.json())\n                print(f\"Fetched {len(response.json())} users\")\n                break\n            else:\n                print(f\"Connection failed with status code: {response.status_code}\")",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "apply_filter",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def apply_filter(data, filters):\n    for key, value in filters.items():\n        data = [item for item in data if str(item.get(key, '')).lower() == str(value).lower()]\n    return data\ndef apply_sorting(data, sort_by):\n    for sort in sort_by:\n        reverse = False\n        if sort.startswith('-'):\n            reverse = True\n            sort = sort[1:]  ",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "apply_sorting",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def apply_sorting(data, sort_by):\n    for sort in sort_by:\n        reverse = False\n        if sort.startswith('-'):\n            reverse = True\n            sort = sort[1:]  \n        data = sorted(data, key=lambda x: x.get(sort, ''), reverse=reverse)\n    return data\ndef apply_field_selection(data, fields):\n    if not fields:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "apply_field_selection",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def apply_field_selection(data, fields):\n    if not fields:\n        return data\n    fields = set(fields.split(','))\n    for item in data:\n        for key in list(item.keys()):\n            if key not in fields:\n                del item[key]\n    return data\n# API 1 ",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_users_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_users_v1():\n    filters = {key: request.args.get(key) for key in ['name', 'email'] if request.args.get(key)}\n    users_data = apply_filter(users, filters)\n    offset = int(request.args.get('offset', 0))\n    limit = int(request.args.get('limit', 10))\n    users_data = users_data[offset:offset + limit]\n    sort_by = request.args.get('sort', '').split(',')\n    users_data = apply_sorting(users_data, sort_by)\n    fields = request.args.get('fields', '')\n    users_data = apply_field_selection(users_data, fields)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_user_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_user_v1():\n    data = request.get_json()\n    if not all(key in data for key in ('name', 'email')):\n        return jsonify({\"error\": \"Both name and email are required!\"}), 400\n    new_user = {\n        'id': len(users) + 1,\n        'name': data['name'],\n        'email': data['email']\n    }\n    users.append(new_user)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User  not found\"}), 404\n    return jsonify(user), 200\n@app.route('/api/v1/users/<int:user_id>', methods=['PUT'])\ndef update_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User  not found\"}), 404",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "update_user_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def update_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User  not found\"}), 404\n    data = request.get_json()\n    if not data:\n        return jsonify({\"error\": \"No data provided\"}), 400\n    user.update({key: data.get(key, user[key]) for key in ('name', 'email')})\n    return jsonify(user), 200\n@app.route('/api/v1/users/<int:user_id>', methods=['DELETE'])",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_user_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def delete_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User  not found\"}), 404\n    users.remove(user)\n    return jsonify({}), 204\n@app.route('/api/v1/users/<int:user_id>', methods=['PATCH'])\ndef patch_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "patch_user_v1",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def patch_user_v1(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User  not found\"}), 404\n    data = request.get_json()\n    if not data:\n        return jsonify({\" error\": \"No data provided\"}), 400\n    user.update({key: data.get(key, user[key]) for key in ('name', 'email')})\n    return jsonify(user), 200\n# API 2 ",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_users_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_users_v2():\n    filters = {key: request.args.get(key) for key in ['name', 'email'] if request.args.get(key)}\n    users_data = apply_filter(users, filters)\n    offset = int(request.args.get('offset', 0))\n    limit = int(request.args.get('limit', 10))\n    users_data = users_data[offset:offset + limit]\n    sort_by = request.args.get('sort', '').split(',')\n    users_data = apply_sorting(users_data, sort_by)\n    fields = request.args.get('fields', '')\n    users_data = apply_field_selection(users_data, fields)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_user_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_user_v2():\n    data = request.get_json()\n    if not all(key in data for key in ('name', 'email')):\n        return jsonify({\"error\": \"Both name and email are required!\"}), 400\n    new_user = {\n        'id': len(users) + 1,\n        'name': data['name'],\n        'email': data['email']\n    }\n    users.append(new_user)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_user_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User    not found\"}), 404\n    return jsonify(user), 200\n@app.route('/api/v2/users/<int:user_id>', methods=['PUT'])\ndef update_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User    not found\"}), 404",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "update_user_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def update_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User    not found\"}), 404\n    data = request.get_json()\n    if not data:\n        return jsonify({\"error\": \"No data provided\"}), 400\n    user.update({key: data.get(key, user[key]) for key in ('name', 'email')})\n    return jsonify(user), 200\n@app.route('/api/v2/users/<int:user_id>', methods=['DELETE'])",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "delete_user_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def delete_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User    not found\"}), 404\n    users.remove(user)\n    return jsonify({}), 204\n@app.route('/api/v2/users/<int:user_id>', methods=['PATCH'])\ndef patch_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "patch_user_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def patch_user_v2(user_id):\n    user = next((u for u in users if u['id'] == user_id), None)\n    if not user:\n        return jsonify({\"error\": \"User    not found\"}), 404\n    data = request.get_json()\n    if not data:\n        return jsonify({\"error\": \"No data provided\"}), 400\n    user.update({key: data.get(key, user[key]) for key in ('name', 'email')})\n    return jsonify(user), 200\n# Common /users",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_users",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_users():\n    filters = {key: request.args.get(key) for key in ['name', 'email'] if request.args.get(key)}\n    users_data = apply_filter(users, filters)\n    offset = int(request.args.get('offset', 0))\n    limit = int(request.args.get('limit', 10))\n    users_data = users_data[offset:offset + limit]\n    sort_by = request.args.get('sort', '').split(',')\n    users_data = apply_sorting(users_data, sort_by)\n    fields = request.args.get('fields', '')\n    users_data = apply_field_selection(users_data, fields)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_user",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_user():\n    data = request.get_json()\n    if not all(key in data for key in ('name', 'email')):\n        return jsonify({\"error\": \"Both name and email are required!\"}), 400\n    new_user = {\n        'id': len(users) + 1,\n        'name': data['name'],\n        'email': data['email']\n    }\n    users.append(new_user)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_car",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_car():\n    data = request.get_json()\n    if not all(key in data for key in ('model', 'year', 'color', 'price')):\n        return jsonify({\"error\": \"Model, year, color, and price are required!\"}), 400\n    new_car = {\n        'id': len(cars) + 1,\n        'model': data['model'],\n        'year': data['year'],\n        'color': data['color'],\n        'price': data['price']",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "add_car_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def add_car_v2():\n    data = request.get_json()\n    new_car = {\n        'id': len(cars) + 1,\n        'model': data['model'],\n        'year': data['year'],\n        'color': data.get('color', 'Unknown'),\n        'price': data.get('price', 0)\n    }\n    cars.append(new_car)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_cars_v2",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_cars_v2():\n    color = request.args.get('color') \n    sort = request.args.get('sort') \n    fields = request.args.get('fields', '')  \n    offset = int(request.args.get('offset', 0)) \n    limit = int(request.args.get('limit', 10))  \n    filtered_cars = [\n        car for car in cars if not color or car.get('color', '').lower() == color.lower()\n    ]\n    if sort:",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_car_by_id",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_car_by_id(car_id):\n    car = next((car for car in cars if car['id'] == car_id), None)\n    if car:\n        car_data = car.copy()\n        car_data['links'] = [\n            {\n                \"rel\": \"self\",\n                \"href\": f\"http://127.0.0.1:5000/api/v2/cars/{car['id']}\"\n            },\n            {",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "update_car",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def update_car(car_id):\n    car = next((car for car in cars if car['id'] == car_id), None)\n    if not car:\n        return jsonify({'message': 'Car not found'}), 404\n    data = request.get_json()\n    car['model'] = data.get('model', car['model'])\n    car['year'] = data.get('year', car['year'])\n    car['color'] = data.get('color', car['color'])\n    car['price'] = data.get('price', car['price'])\n    car_data = car.copy()",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "create_task",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def create_task():\n    task = {\n        'id': len(tasks) + 1,\n        'status': 'in_progress',\n        'result': None\n    }\n    tasks.append(task)\n    threading.Thread(target=long_running_task, args=(task['id'],)).start()\n    return jsonify({'taskId': task['id']}), 202\ndef long_running_task(task_id):",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "long_running_task",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def long_running_task(task_id):\n    time.sleep(5)\n    task = next(t for t in tasks if t['id'] == task_id)\n    task['status'] = 'completed'\n    task['result'] = 'Task completed successfully'\n@app.route('/api/v2/tasks/<int:task_id>', methods=['GET'])\ndef get_task(task_id):\n    task = next((t for t in tasks if t['id'] == task_id), None)\n    if task:\n        return jsonify(task)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "get_task",
+        "kind": 2,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "def get_task(task_id):\n    task = next((t for t in tasks if t['id'] == task_id), None)\n    if task:\n        return jsonify(task)\n    return jsonify({'error': 'Task not found'}), 404\nif __name__ == \"__main__\":\n    threading.Thread(target=fetch_users, daemon=True).start()\n    app.run(debug=True)",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "app = Flask(__name__)\nusers = [\n    {\"id\": 1, \"name\": \"Ahmed Ali\", \"email\": \"ahmed.ali@example.com\"},\n    {\"id\": 2, \"name\": \"Fatma Mohamed\", \"email\": \"fatma.mohamed@example.com\"},\n    {\"id\": 3, \"name\": \"Omar Khaled\", \"email\": \"omar.khaled@example.com\"},\n    {\"id\": 4, \"name\": \"Nadia Hassan\", \"email\": \"nadia.hassan@example.com\"},\n    {\"id\": 5, \"name\": \"Mona Ibrahim\", \"email\": \"mona.ibrahim@example.com\"},\n    {\"id\": 6, \"name\": \"Tarek Magdy\", \"email\": \"tarek.magdy@example.com\"},\n    {\"id\": 7, \"name\": \"Sara Youssef\", \"email\": \"sara.youssef@example.com\"},\n    {\"id\": 8, \"name\": \"Yassin Ahmed\", \"email\": \"yassin.ahmed@example.com\"},",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "users",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "users = [\n    {\"id\": 1, \"name\": \"Ahmed Ali\", \"email\": \"ahmed.ali@example.com\"},\n    {\"id\": 2, \"name\": \"Fatma Mohamed\", \"email\": \"fatma.mohamed@example.com\"},\n    {\"id\": 3, \"name\": \"Omar Khaled\", \"email\": \"omar.khaled@example.com\"},\n    {\"id\": 4, \"name\": \"Nadia Hassan\", \"email\": \"nadia.hassan@example.com\"},\n    {\"id\": 5, \"name\": \"Mona Ibrahim\", \"email\": \"mona.ibrahim@example.com\"},\n    {\"id\": 6, \"name\": \"Tarek Magdy\", \"email\": \"tarek.magdy@example.com\"},\n    {\"id\": 7, \"name\": \"Sara Youssef\", \"email\": \"sara.youssef@example.com\"},\n    {\"id\": 8, \"name\": \"Yassin Ahmed\", \"email\": \"yassin.ahmed@example.com\"},\n    {\"id\": 9, \"name\": \"Layla Abdelaziz\", \"email\": \"layla.abdelaziz@example.com\"},",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "cars",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "cars = [\n    {\"id\": 1, \"model\": \"BMW 320i\", \"year\": 2020, \"color\": \"Red\", \"price\": 35000},\n    {\"id\": 2, \"model\": \"BMW X5\", \"year\": 2023, \"color\": \"Blue\", \"price\": 75000},\n    {\"id\": 3, \"model\": \"BMW M3\", \"year\": 2024, \"color\": \"Black\", \"price\": 95000},\n    {\"id\": 4, \"model\": \"Mercedes-Benz C-Class\", \"year\": 2021, \"color\": \"White\", \"price\": 40000},\n    {\"id\": 5, \"model\": \"Mercedes-Benz GLC\", \"year\": 2022, \"color\": \"Silver\", \"price\": 60000},\n    {\"id\": 6, \"model\": \"Mercedes-Benz S-Class\", \"year\": 2023, \"color\": \"Gray\", \"price\": 120000},\n    {\"id\": 7, \"model\": \"BMW 740i\", \"year\": 2021, \"color\": \"Green\", \"price\": 85000},\n    {\"id\": 8, \"model\": \"Mercedes-Benz E-Class\", \"year\": 2022, \"color\": \"Yellow\", \"price\": 55000},\n    {\"id\": 9, \"model\": \"BMW 118i\", \"year\": 2020, \"color\": \"Purple\", \"price\": 32000},",
+        "detail": "app",
+        "documentation": {}
+    },
+    {
+        "label": "tasks",
+        "kind": 5,
+        "importPath": "app",
+        "description": "app",
+        "peekOfCode": "tasks = [\n    {\"id\": 1, \"name\": \"Complete Project\", \"startTime\": \"2024-11-23T10:00:00Z\", \"endTime\": \"2024-11-24T10:00:00Z\", \"status\": \"in-progress\"},\n    {\"id\": 2, \"name\": \"Submit Report\", \"startTime\": \"2024-11-24T12:00:00Z\", \"endTime\": \"2024-11-25T12:00:00Z\", \"status\": \"pending\"},\n    {\"id\": 3, \"name\": \"Finish Documentation\", \"startTime\": \"2024-11-25T14:00:00Z\", \"endTime\": \"2024-11-26T14:00:00Z\", \"status\": \"pending\"},\n    {\"id\": 4, \"name\": \"Client Meeting\", \"startTime\": \"2024-11-23T08:00:00Z\", \"endTime\": \"2024-11-23T10:00:00Z\", \"status\": \"completed\"},\n    {\"id\": 5, \"name\": \"Design UI\", \"startTime\": \"2024-11-23T09:00:00Z\", \"endTime\": \"2024-11-23T17:00:00Z\", \"status\": \"completed\"},\n    {\"id\": 6, \"name\": \"Code Backend\", \"startTime\": \"2024-11-24T10:00:00Z\", \"endTime\": \"2024-11-24T18:00:00Z\", \"status\": \"in-progress\"},\n    {\"id\": 7, \"name\": \"Deploy Application\", \"startTime\": \"2024-11-25T11:00:00Z\", \"endTime\": \"2024-11-25T15:00:00Z\", \"status\": \"pending\"},\n    {\"id\": 8, \"name\": \"Test Features\", \"startTime\": \"2024-11-26T13:00:00Z\", \"endTime\": \"2024-11-26T17:00:00Z\", \"status\": \"pending\"},\n    {\"id\": 9, \"name\": \"Prepare Presentation\", \"startTime\": \"2024-11-22T10:00:00Z\", \"endTime\": \"2024-11-22T12:00:00Z\", \"status\": \"completed\"},",
+        "detail": "app",
+        "documentation": {}
+    }
+]
